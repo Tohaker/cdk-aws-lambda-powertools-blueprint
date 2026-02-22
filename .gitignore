@@ -1,5 +1,10 @@
-*.js
-!jest.config.js
+# Build directory
+dist
+
+# JSII artifacts
+.jsii
+
+# Node and TypeScript artifacts
 *.d.ts
 node_modules
 

@@ -1,12 +1,3 @@
-# Welcome to your CDK TypeScript Construct Library project
+# CDK AWS Lambda Powertools Blueprint
 
-You should explore the contents of this project. It demonstrates a CDK Construct Library that includes a construct (`CdkAwsLambdaPowertoolsInjector`)
-which contains an Amazon SQS queue that is subscribed to an Amazon SNS topic.
-
-The construct defines an interface (`CdkAwsLambdaPowertoolsInjectorProps`) to configure the visibility timeout of the queue.
-
-## Useful commands
-
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
+This [Blueprint](https://docs.aws.amazon.com/cdk/v2/guide/blueprints.html) enables Function constructs defined in your Stack to have all the necessary properties configured to take advantage of [Powertools for AWS Lambda](https://docs.aws.amazon.com/powertools/).

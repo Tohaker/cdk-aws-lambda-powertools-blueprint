@@ -1,24 +1,59 @@
 {
-  "name": "cdk-aws-lambda-powertools-injector",
-  "version": "0.1.0",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "test": "jest"
-  },
-  "devDependencies": {
-    "@types/jest": "^30",
-    "@types/node": "^20.19.24",
-    "aws-cdk-lib": "^2.238.0",
-    "constructs": "^10.0.0",
-    "jest": "^30",
-    "ts-jest": "^29",
-    "typescript": "~5.9.3"
-  },
-  "peerDependencies": {
-    "aws-cdk-lib": "^2.238.0",
-    "constructs": "^10.0.0"
-  }
+	"name": "cdk-aws-lambda-powertools-blueprint",
+	"description": "AWS CDK Blueprint to add AWS Lambda Powertools configuration to Lambda Functions.",
+	"version": "0.1.0",
+	"author": {
+		"name": "Miles Bardon",
+		"email": "milesbardon@gmail.com"
+	},
+	"repository": {
+		"url": "https://github.com/tohaker/cdk-aws-lambda-powertools-blueprint.git",
+		"type": "git"
+	},
+	"license": "MIT",
+	"keywords": [
+		"awscdk",
+		"powertools",
+		"blueprint",
+		"lambda"
+	],
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "jsii",
+		"watch": "jsii --watch",
+		"package": "jsii-pacmak",
+		"test": "vitest",
+		"lint": "biome check",
+		"lint:fix": "biome check --write"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.4.4",
+		"@types/node": "20.19.24",
+		"aws-cdk-lib": "2.196.0",
+		"constructs": "10.0.0",
+		"jsii": "5.9.27",
+		"jsii-pacmak": "1.126.0",
+		"typescript": "5.9.3",
+		"vitest": "4.0.18"
+	},
+	"peerDependencies": {
+		"aws-cdk-lib": "^2.196.0",
+		"constructs": "^10.0.0"
+	},
+	"stability": "experimental",
+	"jsii": {
+		"versionFormat": "short",
+		"excludeTypescript": [
+			"test/**/*",
+			"vitest.*"
+		],
+		"tsc": {
+			"outDir": "dist",
+			"types": [
+				"node",
+				"vitest/globals"
+			]
+		}
+	}
 }
