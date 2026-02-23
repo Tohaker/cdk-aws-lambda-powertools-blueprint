@@ -44,16 +44,6 @@
 	"stability": "experimental",
 	"jsii": {
 		"versionFormat": "short",
-		"excludeTypescript": [
-			"test/**/*",
-			"vitest.*"
-		],
-		"tsc": {
-			"outDir": "dist",
-			"types": [
-				"node",
-				"vitest/globals"
-			]
-		}
+		"tsconfig": "tsconfig.build.json"
 	}
 }

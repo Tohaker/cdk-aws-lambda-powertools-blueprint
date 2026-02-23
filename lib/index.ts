@@ -1,22 +1,132 @@
-// import * as cdk from 'aws-cdk-lib';
-import { Construct } from "constructs";
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import {
+	Annotations,
+	type InjectionContext,
+	type IPropertyInjector,
+} from "aws-cdk-lib";
+import {
+	Architecture,
+	type FunctionProps,
+	type ILayerVersion,
+	Function as LambdaFunction,
+	LayerVersion,
+	RuntimeFamily,
+} from "aws-cdk-lib/aws-lambda";
+import {
+	NodejsFunction,
+	type NodejsFunctionProps,
+} from "aws-cdk-lib/aws-lambda-nodejs";
+import { StringParameter } from "aws-cdk-lib/aws-ssm";
 
-export type CdkAwsLambdaPowertoolsBlueprintProps = {};
+export interface PowertoolsFunctionDefaultsProps {
+	/**
+	 * The Powertools package version to load into the Lambda.
+	 * Only provide this value if you don't want the latest version.
+	 *
+	 * Setting this field will only have an effect on NodeJS Functions.
+	 *
+	 * @default "latest"
+	 */
+	readonly powertoolsVersion?: string;
+}
 
-export class CdkAwsLambdaPowertoolsBlueprint extends Construct {
-	constructor(
-		scope: Construct,
-		id: string,
-		// props: CdkAwsLambdaPowertoolsBlueprintProps = {},
-	) {
-		super(scope, id);
+/**
+ * Applies Powertools-specific defaults to Functions in your Stack.
+ *
+ * For NodeJS and Python Functions, also applies the official Lambda Layer
+ * for the appropriate runtime and architecture.
+ *
+ * NodeJS Functions will also have the '@aws-lambda-powertools/*' modules
+ * excluded from being bundled to minimise the bundle size.
+ */
+export class PowertoolsFunctionDefaults implements IPropertyInjector {
+	public readonly constructUniqueId: string;
 
-		// Define construct contents here
+	private powertoolsVersion: string;
 
-		// example resource
-		// const queue = new sqs.Queue(this, 'CdkAwsLambdaPowertoolsBlueprintQueue', {
-		//   visibilityTimeout: cdk.Duration.seconds(300)
-		// });
+	constructor(props?: PowertoolsFunctionDefaultsProps) {
+		this.constructUniqueId = LambdaFunction.PROPERTY_INJECTION_ID;
+
+		this.powertoolsVersion = props?.powertoolsVersion ?? "latest";
+	}
+
+	// biome-ignore lint/suspicious/noExplicitAny: JSII requires this type to be "any"
+	public inject(originalProps: any, context: InjectionContext) {
+		const originalFunctionProps: FunctionProps | NodejsFunctionProps =
+			originalProps;
+
+		const scope = context.scope as LambdaFunction;
+
+		let powertoolsLayerParameterName = "";
+
+		// Determine if the Function runtime has a layer available
+		switch (originalFunctionProps.runtime?.family) {
+			case RuntimeFamily.NODEJS: {
+				// https://docs.aws.amazon.com/powertools/typescript/latest/getting-started/lambda-layers/#lookup-layer-arn-via-aws-ssm-parameter-store
+				powertoolsLayerParameterName = `/aws/service/powertools/typescript/generic/all/${this.powertoolsVersion}`;
+				break;
+			}
+			case RuntimeFamily.PYTHON: {
+				const architecture =
+					originalFunctionProps.architecture ?? Architecture.X86_64;
+
+				if (!originalFunctionProps.architecture) {
+					Annotations.of(scope).addWarningV2(
+						"cdk-aws-lambda-powertools-blueprint:Blueprint.missingArchitecture",
+						`Function ${context.id} has no specified Architecture and will fall back to ${Architecture.X86_64.name}.`,
+					);
+				}
+
+				// https://docs.aws.amazon.com/powertools/python/latest/getting-started/install/#using-ssm-parameter-store
+				powertoolsLayerParameterName = `/aws/service/powertools/python/${architecture.name}/${originalFunctionProps.runtime.name}/latest`;
+				break;
+			}
+			default: {
+				Annotations.of(scope).addInfo(
+					`Function ${context.id} is configured with runtime ${originalFunctionProps.runtime} and will not have the Powertools Lambda Layer applied.`,
+				);
+			}
+		}
+
+		let powertoolsLayer: ILayerVersion | undefined;
+
+		const layers = originalFunctionProps.layers ?? [];
+
+		if (powertoolsLayerParameterName) {
+			// Create the LayerVersion construct to apply to the Function
+			powertoolsLayer = LayerVersion.fromLayerVersionArn(
+				scope,
+				`${context.id}-PowertoolsLayer`,
+				StringParameter.valueForStringParameter(
+					scope,
+					powertoolsLayerParameterName,
+				),
+			);
+
+			// Apply the Powertools layer to the end of the layers array
+			layers.push(powertoolsLayer);
+
+			// For NodejsFunction Constructs, we also want to override the bundling to make sure the Lambda bundle is as small as possible
+			if (context.scope instanceof NodejsFunction) {
+				const originalNodejsProps: NodejsFunctionProps = originalFunctionProps;
+
+				return {
+					...originalNodejsProps,
+					layers,
+					bundling: {
+						...originalNodejsProps.bundling,
+						externalModules: [
+							...(originalNodejsProps.bundling?.externalModules ?? []),
+							"@aws-sdk/*",
+							"@aws-lambda-powertools/*",
+						],
+					},
+				};
+			}
+		}
+
+		return {
+			...originalProps,
+			layers,
+		};
 	}
 }
