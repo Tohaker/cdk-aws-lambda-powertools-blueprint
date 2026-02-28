@@ -124,8 +124,15 @@ export class PowertoolsFunctionDefaults implements IPropertyInjector {
 			}
 		}
 
+		const environment: FunctionProps["environment"] = {
+			POWERTOOLS_SERVICE_NAME:
+				originalFunctionProps.functionName ?? "service_undefined",
+			...originalFunctionProps.environment,
+		};
+
 		return {
 			...originalProps,
+			environment,
 			layers,
 		};
 	}
