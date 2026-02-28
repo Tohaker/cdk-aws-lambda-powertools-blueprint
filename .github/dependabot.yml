@@ -1,0 +1,27 @@
+version: 2
+
+updates:
+  - directory: /
+    package-ecosystem: github-actions
+    rebase-strategy: auto
+    schedule:
+      interval: "monthly"
+
+  - directory: /
+    package-ecosystem: npm
+    rebase-strategy: auto
+    schedule:
+      interval: "monthly"
+    groups:
+      typescript:
+        patterns:
+          - "@types/*"
+          - typescript
+      aws-cdk:
+        patterns:
+          - aws-cdk-lib
+          - constructs
+      jsii:
+        patterns:
+          - jsii
+          - jsii-pacmak
