@@ -32,11 +32,17 @@ export interface PowertoolsFunctionDefaultsProps {
 /**
  * Applies Powertools-specific defaults to Functions in your Stack.
  *
+ * - If not provided, the POWERTOOLS_SERVICE_NAME environment variable is
+ *   set to the `functionName` provided to the function props. If no
+ *   `functionName` is set, `service_undefined` is set instead (as per the [Powertools defaults](https://docs.aws.amazon.com/powertools/typescript/latest/features/logger/#utility-settings))
+ *
  * For NodeJS and Python Functions, also applies the official Lambda Layer
  * for the appropriate runtime and architecture.
  *
  * NodeJS Functions will also have the '@aws-lambda-powertools/*' modules
  * excluded from being bundled to minimise the bundle size.
+ *
+ * @see https://docs.aws.amazon.com/powertools/
  */
 export class PowertoolsFunctionDefaults implements IPropertyInjector {
 	public readonly constructUniqueId: string;
