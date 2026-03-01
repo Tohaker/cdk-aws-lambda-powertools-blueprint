@@ -1,3 +1,5 @@
+name: Release package
+
 on:
   push:
     branches:
