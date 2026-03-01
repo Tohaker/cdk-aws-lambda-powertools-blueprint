@@ -97,6 +97,12 @@ export class PowertoolsFunctionDefaults implements IPropertyInjector {
 
 		const layers = originalFunctionProps.layers ?? [];
 
+		const environment: FunctionProps["environment"] = {
+			POWERTOOLS_SERVICE_NAME:
+				originalFunctionProps.functionName ?? "service_undefined",
+			...originalFunctionProps.environment,
+		};
+
 		if (powertoolsLayerParameterName) {
 			// Create the LayerVersion construct to apply to the Function
 			powertoolsLayer = LayerVersion.fromLayerVersionArn(
@@ -112,11 +118,14 @@ export class PowertoolsFunctionDefaults implements IPropertyInjector {
 			layers.push(powertoolsLayer);
 
 			// For NodejsFunction Constructs, we also want to override the bundling to make sure the Lambda bundle is as small as possible
-			if (context.scope instanceof NodejsFunction) {
+			if (
+				context.scope.node.tryFindChild(context.id) instanceof NodejsFunction
+			) {
 				const originalNodejsProps: NodejsFunctionProps = originalFunctionProps;
 
 				return {
 					...originalNodejsProps,
+					environment,
 					layers,
 					bundling: {
 						...originalNodejsProps.bundling,
@@ -129,12 +138,6 @@ export class PowertoolsFunctionDefaults implements IPropertyInjector {
 				};
 			}
 		}
-
-		const environment: FunctionProps["environment"] = {
-			POWERTOOLS_SERVICE_NAME:
-				originalFunctionProps.functionName ?? "service_undefined",
-			...originalFunctionProps.environment,
-		};
 
 		return {
 			...originalProps,

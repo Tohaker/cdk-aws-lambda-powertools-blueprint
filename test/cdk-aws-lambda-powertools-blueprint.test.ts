@@ -34,12 +34,12 @@ describe("PowertoolsFunctionDefaults", () => {
 		it("should not return any bundling options", () => {
 			const app = new App();
 			const stack = new Stack(app, "TestStack");
-			const fn = new LambdaFunction(stack, "TestFunction", nodejsFunctionProps);
+			new LambdaFunction(stack, "TestFunction", nodejsFunctionProps);
 
 			const injector = new PowertoolsFunctionDefaults();
 
 			const newProps = injector.inject(nodejsFunctionProps, {
-				scope: fn,
+				scope: stack,
 				id: "TestFunction",
 			});
 
@@ -295,12 +295,12 @@ describe("PowertoolsFunctionDefaults", () => {
 		it("should return externalModules in the bundling options", () => {
 			const app = new App();
 			const stack = new Stack(app, "TestStack");
-			const fn = new NodejsFunction(stack, "TestFunction", nodejsFunctionProps);
+			new NodejsFunction(stack, "TestFunction", nodejsFunctionProps);
 
 			const injector = new PowertoolsFunctionDefaults();
 
 			const newProps = injector.inject(nodejsFunctionProps, {
-				scope: fn,
+				scope: stack,
 				id: "TestFunction",
 			});
 
@@ -336,6 +336,16 @@ describe("PowertoolsFunctionDefaults", () => {
 					Layers: [stack.resolve(layer.layerVersionArn)],
 				});
 			});
+
+			it("should configure the POWERTOOLS_SERVICE_NAME to be the function name", () => {
+				template.hasResourceProperties("AWS::Lambda::Function", {
+					Environment: {
+						Variables: {
+							POWERTOOLS_SERVICE_NAME: nodejsFunctionProps.functionName,
+						},
+					},
+				});
+			});
 		});
 
 		describe("Given a specific version of the module is required", () => {
@@ -365,6 +375,16 @@ describe("PowertoolsFunctionDefaults", () => {
 
 				template.hasResourceProperties("AWS::Lambda::Function", {
 					Layers: [stack.resolve(layer.layerVersionArn)],
+				});
+			});
+
+			it("should configure the POWERTOOLS_SERVICE_NAME to be the function name", () => {
+				template.hasResourceProperties("AWS::Lambda::Function", {
+					Environment: {
+						Variables: {
+							POWERTOOLS_SERVICE_NAME: nodejsFunctionProps.functionName,
+						},
+					},
 				});
 			});
 		});
