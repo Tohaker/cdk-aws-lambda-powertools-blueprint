@@ -13,6 +13,33 @@ Including the `PowertoolsFunctionDefaults` in your property injectors will apply
 
 Different Lambda Function runtimes will take advantage of different behaviour, demonstrated in each section.
 
+In general, you will just need to add `PowertoolsFunctionDefaults` to your `propertyInjectors`.
+You can add it to the `App` instance to cover all your stacks;
+
+```ts
+import { App } from "aws-cdk-lib";
+
+import { PowertoolsFunctionDefaults } from "cdk-aws-lambda-powertools-blueprint";
+
+const app = new App({
+  propertyInjectors: [new PowertoolsFunctionDefaults()],
+});
+```
+
+Or you can add it to individual `Stack` instances for more granular control;
+
+```ts
+import { App } from "aws-cdk-lib";
+import { MyStack } from "../lib/myStack.ts";
+import { PowertoolsFunctionDefaults } from "cdk-aws-lambda-powertools-blueprint";
+
+const app = new App();
+
+const stack = new MyStack(app, "MyStack", {
+  propertyInjectors: [new PowertoolsFunctionDefaults()],
+});
+```
+
 ### NodeJS Functions
 
 Both `Function` and `NodejsFunction` constructs are supported with the `NODEJS` Runtime Family. If you opt to use the latter, you will also benefit from the `bundling` props being updated to exclude the `@aws-lambda-powertools/*` modules from the final bundle. This will have the benefit of reducing the final bundle size, which can lead to performance improvements.

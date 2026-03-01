@@ -10,6 +10,9 @@
 		"url": "git+https://github.com/Tohaker/cdk-aws-lambda-powertools-blueprint.git",
 		"type": "git"
 	},
+	"bugs": {
+		"url": "https://github.com/Tohaker/cdk-aws-lambda-powertools-blueprint/issues"
+	},
 	"license": "MIT",
 	"keywords": [
 		"awscdk",
@@ -47,7 +50,7 @@
 		"aws-cdk-lib": "^2.196.0",
 		"constructs": "^10.0.0"
 	},
-	"stability": "experimental",
+	"stability": "stable",
 	"jsii": {
 		"targets": {},
 		"outdir": "./dist",
