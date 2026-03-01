@@ -22,9 +22,10 @@
 	"scripts": {
 		"build": "jsii",
 		"watch": "jsii --watch",
+		"prepackage": "npm run build",
 		"package": "jsii-pacmak",
-		"prepublish": "npm run package",
-		"publish": "publib",
+		"prerelease": "npm run package",
+		"release": "publib",
 		"test": "vitest",
 		"lint": "biome check",
 		"lint:fix": "biome check --write",
