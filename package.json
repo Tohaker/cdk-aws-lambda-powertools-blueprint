@@ -1,7 +1,7 @@
 {
 	"name": "cdk-aws-lambda-powertools-blueprint",
 	"description": "AWS CDK Blueprint to add AWS Lambda Powertools configuration to Lambda Functions.",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"author": {
 		"name": "Miles Bardon",
 		"email": "milesbardon@gmail.com"
