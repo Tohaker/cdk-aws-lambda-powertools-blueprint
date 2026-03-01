@@ -68,6 +68,7 @@ Install dependencies
    - `npm run build`
 5. Update relevant documentation
 6. Create the commit with relevant files
+7. Create a changeset with `npm run changeset` and commit the generated file
 
 ### Step 5: Make the pull request
 
