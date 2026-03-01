@@ -1,9 +1,15 @@
+name: Release package
+
 on:
   push:
     branches:
       - main
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  id-token: write
+  contents: write
 
 jobs:
   release:
@@ -17,5 +23,5 @@ jobs:
         run: npm ci
       - name: Create Release Pull Request
         uses: changesets/action@v1
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        with:
+          publish: npm run release

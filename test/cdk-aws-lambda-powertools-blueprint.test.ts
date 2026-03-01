@@ -1,3 +1,4 @@
+import { resolve } from "node:path";
 import { App, Stack } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import {
@@ -10,7 +11,6 @@ import {
 } from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { PowertoolsFunctionDefaults } from "../lib/index";
-import { resolve } from "node:path";
 
 const nodejsFunctionProps: FunctionProps = {
 	functionName: "test-function-name",
