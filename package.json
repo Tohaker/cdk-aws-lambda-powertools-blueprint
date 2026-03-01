@@ -7,7 +7,7 @@
 		"email": "milesbardon@gmail.com"
 	},
 	"repository": {
-		"url": "git+https://github.com/tohaker/cdk-aws-lambda-powertools-blueprint.git",
+		"url": "git+https://github.com/Tohaker/cdk-aws-lambda-powertools-blueprint.git",
 		"type": "git"
 	},
 	"license": "MIT",
