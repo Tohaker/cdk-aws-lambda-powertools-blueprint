@@ -35,7 +35,7 @@
 		"@biomejs/biome": "2.4.4",
 		"@changesets/cli": "2.29.8",
 		"@types/node": "25.3.3",
-		"aws-cdk-lib": "2.196.0",
+		"aws-cdk-lib": "2.240.0",
 		"constructs": "10.0.0",
 		"jsii": "5.9.29",
 		"jsii-pacmak": "1.127.0",
