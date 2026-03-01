@@ -25,3 +25,5 @@ jobs:
         uses: changesets/action@v1
         with:
           publish: npm run release
+        env:
+          NPM_TRUSTED_PUBLISHER: true
