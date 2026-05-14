@@ -60,7 +60,7 @@ describe("PowertoolsFunctionDefaults", () => {
 
 				it("should add the Powertools Lambda Layer to the Function", () => {
 					const layer = stack.node.tryFindChild(
-						"TestFunction-PowertoolsLayer",
+						"PowertoolsLayer-nodejs-latest",
 					) as ILayerVersion;
 
 					template.hasParameter("*", {
@@ -130,7 +130,7 @@ describe("PowertoolsFunctionDefaults", () => {
 
 				it("should add the Powertools Lambda Layer to the Function", () => {
 					const layer = stack.node.tryFindChild(
-						"TestFunction-PowertoolsLayer",
+						"PowertoolsLayer-nodejs-2.0.0",
 					) as ILayerVersion;
 
 					template.hasParameter("*", {
@@ -158,7 +158,7 @@ describe("PowertoolsFunctionDefaults", () => {
 				const template = Template.fromStack(stack);
 
 				const layer = stack.node.tryFindChild(
-					"TestFunction-PowertoolsLayer",
+					"PowertoolsLayer-python-arm64-python3.13",
 				) as ILayerVersion;
 
 				template.hasParameter("*", {
@@ -186,7 +186,7 @@ describe("PowertoolsFunctionDefaults", () => {
 				const template = Template.fromStack(stack);
 
 				const layer = stack.node.tryFindChild(
-					"TestFunction-PowertoolsLayer",
+					"PowertoolsLayer-python-x86_64-python3.13",
 				) as ILayerVersion;
 
 				template.hasParameter("*", {
@@ -324,7 +324,7 @@ describe("PowertoolsFunctionDefaults", () => {
 
 			it("should add the Powertools Lambda Layer to the Function", () => {
 				const layer = stack.node.tryFindChild(
-					"TestFunction-PowertoolsLayer",
+					"PowertoolsLayer-nodejs-latest",
 				) as ILayerVersion;
 
 				template.hasParameter("*", {
@@ -365,7 +365,7 @@ describe("PowertoolsFunctionDefaults", () => {
 
 			it("should add the Powertools Lambda Layer to the Function", () => {
 				const layer = stack.node.tryFindChild(
-					"TestFunction-PowertoolsLayer",
+					"PowertoolsLayer-nodejs-2.0.0",
 				) as ILayerVersion;
 
 				template.hasParameter("*", {

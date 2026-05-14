@@ -2,6 +2,7 @@ import {
 	Annotations,
 	type InjectionContext,
 	type IPropertyInjector,
+	Stack,
 } from "aws-cdk-lib";
 import {
 	Architecture,
@@ -60,15 +61,18 @@ export class PowertoolsFunctionDefaults implements IPropertyInjector {
 		const originalFunctionProps: FunctionProps | NodejsFunctionProps =
 			originalProps;
 
-		const scope = context.scope as LambdaFunction;
+		const parentScope = context.scope;
+		const stack = Stack.of(parentScope);
 
 		let powertoolsLayerParameterName = "";
+		let layerKey = "";
 
 		// Determine if the Function runtime has a layer available
 		switch (originalFunctionProps.runtime?.family) {
 			case RuntimeFamily.NODEJS: {
 				// https://docs.aws.amazon.com/powertools/typescript/latest/getting-started/lambda-layers/#lookup-layer-arn-via-aws-ssm-parameter-store
 				powertoolsLayerParameterName = `/aws/service/powertools/typescript/generic/all/${this.powertoolsVersion}`;
+				layerKey = `PowertoolsLayer-nodejs-${this.powertoolsVersion}`;
 				break;
 			}
 			case RuntimeFamily.PYTHON: {
@@ -76,7 +80,7 @@ export class PowertoolsFunctionDefaults implements IPropertyInjector {
 					originalFunctionProps.architecture ?? Architecture.X86_64;
 
 				if (!originalFunctionProps.architecture) {
-					Annotations.of(scope).addWarningV2(
+					Annotations.of(parentScope).addWarningV2(
 						"cdk-aws-lambda-powertools-blueprint:Blueprint.missingArchitecture",
 						`Function ${context.id} has no specified Architecture and will fall back to ${Architecture.X86_64.name}.`,
 					);
@@ -84,16 +88,15 @@ export class PowertoolsFunctionDefaults implements IPropertyInjector {
 
 				// https://docs.aws.amazon.com/powertools/python/latest/getting-started/install/#using-ssm-parameter-store
 				powertoolsLayerParameterName = `/aws/service/powertools/python/${architecture.name}/${originalFunctionProps.runtime.name}/latest`;
+				layerKey = `PowertoolsLayer-python-${architecture.name}-${originalFunctionProps.runtime.name}`;
 				break;
 			}
 			default: {
-				Annotations.of(scope).addInfo(
+				Annotations.of(parentScope).addInfo(
 					`Function ${context.id} is configured with runtime ${originalFunctionProps.runtime} and will not have the Powertools Lambda Layer applied.`,
 				);
 			}
 		}
-
-		let powertoolsLayer: ILayerVersion | undefined;
 
 		const layers = originalFunctionProps.layers ?? [];
 
@@ -104,23 +107,26 @@ export class PowertoolsFunctionDefaults implements IPropertyInjector {
 		};
 
 		if (powertoolsLayerParameterName) {
-			// Create the LayerVersion construct to apply to the Function
-			powertoolsLayer = LayerVersion.fromLayerVersionArn(
-				scope,
-				`${context.id}-PowertoolsLayer`,
-				StringParameter.valueForStringParameter(
-					scope,
-					powertoolsLayerParameterName,
-				),
-			);
+			// Single Powertools Layer per layerKey
+			const existing = stack.node.tryFindChild(layerKey) as
+				| ILayerVersion
+				| undefined;
+			const powertoolsLayer =
+				existing ??
+				LayerVersion.fromLayerVersionArn(
+					stack,
+					layerKey,
+					StringParameter.valueForStringParameter(
+						stack,
+						powertoolsLayerParameterName,
+					),
+				);
 
 			// Apply the Powertools layer to the end of the layers array
 			layers.push(powertoolsLayer);
 
 			// For NodejsFunction Constructs, we also want to override the bundling to make sure the Lambda bundle is as small as possible
-			if (
-				context.scope.node.tryFindChild(context.id) instanceof NodejsFunction
-			) {
+			if (parentScope.node.tryFindChild(context.id) instanceof NodejsFunction) {
 				const originalNodejsProps: NodejsFunctionProps = originalFunctionProps;
 
 				return {
