@@ -37,7 +37,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "2.4.16",
 		"@changesets/cli": "2.29.8",
-		"@types/node": "25.9.1",
+		"@types/node": "26.1.0",
 		"aws-cdk-lib": "2.257.0",
 		"constructs": "10.6.0",
 		"jsii": "5.9.44",
