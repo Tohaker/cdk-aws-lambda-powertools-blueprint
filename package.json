@@ -44,7 +44,7 @@
 		"jsii-pacmak": "1.133.0",
 		"publib": "0.2.1049",
 		"typescript": "6.0.3",
-		"vitest": "4.1.6"
+		"vitest": "4.1.9"
 	},
 	"peerDependencies": {
 		"aws-cdk-lib": "^2.196.0",
