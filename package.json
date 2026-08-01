@@ -37,13 +37,13 @@
 	"devDependencies": {
 		"@biomejs/biome": "2.4.16",
 		"@changesets/cli": "2.31.0",
-		"@types/node": "26.1.0",
+		"@types/node": "26.1.2",
 		"aws-cdk-lib": "2.260.0",
 		"constructs": "10.6.0",
 		"jsii": "6.0.4",
 		"jsii-pacmak": "1.137.0",
 		"publib": "0.2.1049",
-		"typescript": "6.0.3",
+		"typescript": "7.0.2",
 		"vitest": "4.1.9"
 	},
 	"peerDependencies": {
