@@ -35,7 +35,7 @@
 		"changeset": "changeset"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.4.16",
+		"@biomejs/biome": "2.5.7",
 		"@changesets/cli": "2.31.0",
 		"@types/node": "26.1.2",
 		"aws-cdk-lib": "2.263.0",
