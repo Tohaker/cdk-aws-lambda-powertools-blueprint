@@ -249,46 +249,45 @@ describe("PowertoolsFunctionDefaults", () => {
 			});
 		});
 
-		describe.each([
-			Runtime.DOTNET_9,
-			Runtime.JAVA_21,
-			Runtime.RUBY_3_4,
-		])("Given the Function has a %s runtime", (runtime) => {
-			const defaultFunctionProps: FunctionProps = {
-				functionName: "test-function-name",
-				runtime,
-				code: Code.fromAsset(resolve(__dirname, "./functionCode")),
-				handler: "index.default",
-			};
+		describe.each([Runtime.DOTNET_9, Runtime.JAVA_21, Runtime.RUBY_3_4])(
+			"Given the Function has a %s runtime",
+			(runtime) => {
+				const defaultFunctionProps: FunctionProps = {
+					functionName: "test-function-name",
+					runtime,
+					code: Code.fromAsset(resolve(__dirname, "./functionCode")),
+					handler: "index.default",
+				};
 
-			const app = new App({
-				propertyInjectors: [new PowertoolsFunctionDefaults()],
-			});
-
-			const stack = new Stack(app, "TestStack");
-
-			new LambdaFunction(stack, "TestFunction", defaultFunctionProps);
-
-			const template = Template.fromStack(stack);
-
-			it("should not create a Powertools Layer", () => {
-				const layer = stack.node.tryFindChild(
-					"TestFunction-PowertoolsLayer",
-				) as ILayerVersion;
-
-				expect(layer).toBeUndefined();
-			});
-
-			it("should configure the POWERTOOLS_SERVICE_NAME to be the function name", () => {
-				template.hasResourceProperties("AWS::Lambda::Function", {
-					Environment: {
-						Variables: {
-							POWERTOOLS_SERVICE_NAME: defaultFunctionProps.functionName,
-						},
-					},
+				const app = new App({
+					propertyInjectors: [new PowertoolsFunctionDefaults()],
 				});
-			});
-		});
+
+				const stack = new Stack(app, "TestStack");
+
+				new LambdaFunction(stack, "TestFunction", defaultFunctionProps);
+
+				const template = Template.fromStack(stack);
+
+				it("should not create a Powertools Layer", () => {
+					const layer = stack.node.tryFindChild(
+						"TestFunction-PowertoolsLayer",
+					) as ILayerVersion;
+
+					expect(layer).toBeUndefined();
+				});
+
+				it("should configure the POWERTOOLS_SERVICE_NAME to be the function name", () => {
+					template.hasResourceProperties("AWS::Lambda::Function", {
+						Environment: {
+							Variables: {
+								POWERTOOLS_SERVICE_NAME: defaultFunctionProps.functionName,
+							},
+						},
+					});
+				});
+			},
+		);
 	});
 
 	describe("Given the Stack has a NodejsFunction construct", () => {
