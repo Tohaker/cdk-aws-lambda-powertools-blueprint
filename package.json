@@ -40,8 +40,8 @@
 		"@types/node": "26.1.2",
 		"aws-cdk-lib": "2.263.0",
 		"constructs": "10.8.1",
-		"jsii": "6.0.4",
-		"jsii-pacmak": "1.137.0",
+		"jsii": "6.0.9",
+		"jsii-pacmak": "1.139.0",
 		"publib": "0.2.1058",
 		"typescript": "7.0.2",
 		"vitest": "4.1.9"
