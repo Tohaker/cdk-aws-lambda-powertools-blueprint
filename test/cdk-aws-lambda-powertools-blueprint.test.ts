@@ -71,6 +71,37 @@ describe("PowertoolsFunctionDefaults", () => {
 					},
 				});
 			});
+
+			describe("Given the Function props already specify a POWERTOOLS_LOG_LEVEL environment variable", () => {
+				const app = new App({
+					propertyInjectors: [
+						new PowertoolsFunctionDefaults({
+							logLevel: LogLevel.ERROR,
+						}),
+					],
+				});
+
+				const stack = new Stack(app, "TestStack");
+
+				new LambdaFunction(stack, "TestFunction", {
+					...nodejsFunctionProps,
+					environment: {
+						POWERTOOLS_LOG_LEVEL: LogLevel.DEBUG,
+					},
+				});
+
+				const template = Template.fromStack(stack);
+
+				it("should not override the POWERTOOLS_LOG_LEVEL environment variable on the Function", () => {
+					template.hasResourceProperties("AWS::Lambda::Function", {
+						Environment: {
+							Variables: {
+								POWERTOOLS_LOG_LEVEL: LogLevel.DEBUG,
+							},
+						},
+					});
+				});
+			});
 		});
 
 		describe("Given no specific log level is set", () => {
