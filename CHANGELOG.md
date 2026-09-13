@@ -1,5 +1,11 @@
 # cdk-aws-lambda-powertools-blueprint
 
+## 2.1.0
+
+### Minor Changes
+
+- 38df673: Adds default POWERTOOLS_LOG_LEVEL environment variable to Function constructs. Defaults to INFO, and can be overridden with the logLevel parameter in the Blueprint props, or setting an individual POWERTOOLS_LOG_LEVEL environment variable to the Function construct.
+
 ## 2.0.0
 
 ### Major Changes
