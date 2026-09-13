@@ -10,6 +10,7 @@ import {
 	Runtime,
 } from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+import { LogLevel } from "../lib/constants";
 import { PowertoolsFunctionDefaults } from "../lib/index";
 
 const nodejsFunctionProps: FunctionProps = {
@@ -44,6 +45,85 @@ describe("PowertoolsFunctionDefaults", () => {
 			});
 
 			expect(newProps).not.toHaveProperty("bundling");
+		});
+
+		describe("Given a specific log level is set", () => {
+			const app = new App({
+				propertyInjectors: [
+					new PowertoolsFunctionDefaults({
+						logLevel: LogLevel.DEBUG,
+					}),
+				],
+			});
+
+			const stack = new Stack(app, "TestStack");
+
+			new LambdaFunction(stack, "TestFunction", nodejsFunctionProps);
+
+			const template = Template.fromStack(stack);
+
+			it("should set the POWERTOOLS_LOG_LEVEL environment variable on the Function", () => {
+				template.hasResourceProperties("AWS::Lambda::Function", {
+					Environment: {
+						Variables: {
+							POWERTOOLS_LOG_LEVEL: LogLevel.DEBUG,
+						},
+					},
+				});
+			});
+
+			describe("Given the Function props already specify a POWERTOOLS_LOG_LEVEL environment variable", () => {
+				const app = new App({
+					propertyInjectors: [
+						new PowertoolsFunctionDefaults({
+							logLevel: LogLevel.ERROR,
+						}),
+					],
+				});
+
+				const stack = new Stack(app, "TestStack");
+
+				new LambdaFunction(stack, "TestFunction", {
+					...nodejsFunctionProps,
+					environment: {
+						POWERTOOLS_LOG_LEVEL: LogLevel.DEBUG,
+					},
+				});
+
+				const template = Template.fromStack(stack);
+
+				it("should not override the POWERTOOLS_LOG_LEVEL environment variable on the Function", () => {
+					template.hasResourceProperties("AWS::Lambda::Function", {
+						Environment: {
+							Variables: {
+								POWERTOOLS_LOG_LEVEL: LogLevel.DEBUG,
+							},
+						},
+					});
+				});
+			});
+		});
+
+		describe("Given no specific log level is set", () => {
+			const app = new App({
+				propertyInjectors: [new PowertoolsFunctionDefaults()],
+			});
+
+			const stack = new Stack(app, "TestStack");
+
+			new LambdaFunction(stack, "TestFunction", nodejsFunctionProps);
+
+			const template = Template.fromStack(stack);
+
+			it("should set the POWERTOOLS_LOG_LEVEL environment variable on the Function to INFO", () => {
+				template.hasResourceProperties("AWS::Lambda::Function", {
+					Environment: {
+						Variables: {
+							POWERTOOLS_LOG_LEVEL: LogLevel.INFO,
+						},
+					},
+				});
+			});
 		});
 
 		describe("Given the Function has a Node JS runtime", () => {

@@ -17,6 +17,9 @@ import {
 	type NodejsFunctionProps,
 } from "aws-cdk-lib/aws-lambda-nodejs";
 import { StringParameter } from "aws-cdk-lib/aws-ssm";
+import { LogLevel } from "./constants";
+
+export { LogLevel } from "./constants";
 
 export interface PowertoolsFunctionDefaultsProps {
 	/**
@@ -28,6 +31,13 @@ export interface PowertoolsFunctionDefaultsProps {
 	 * @default "latest"
 	 */
 	readonly powertoolsVersion?: string;
+	/**
+	 * Log level to set on all Lambda functions.
+	 * Sets this value to the `POWERTOOLS_LOG_LEVEL` environment variable.
+	 *
+	 * @default "INFO"
+	 */
+	readonly logLevel?: LogLevel;
 }
 
 /**
@@ -49,11 +59,13 @@ export class PowertoolsFunctionDefaults implements IPropertyInjector {
 	public readonly constructUniqueId: string;
 
 	private powertoolsVersion: string;
+	private logLevel: LogLevel;
 
 	constructor(props?: PowertoolsFunctionDefaultsProps) {
 		this.constructUniqueId = LambdaFunction.PROPERTY_INJECTION_ID;
 
 		this.powertoolsVersion = props?.powertoolsVersion ?? "latest";
+		this.logLevel = props?.logLevel ?? LogLevel.INFO;
 	}
 
 	// biome-ignore lint/suspicious/noExplicitAny: JSII requires this type to be "any"
@@ -103,6 +115,7 @@ export class PowertoolsFunctionDefaults implements IPropertyInjector {
 		const environment: FunctionProps["environment"] = {
 			POWERTOOLS_SERVICE_NAME:
 				originalFunctionProps.functionName ?? "service_undefined",
+			POWERTOOLS_LOG_LEVEL: this.logLevel,
 			...originalFunctionProps.environment,
 		};
 
