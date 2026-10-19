@@ -42,7 +42,7 @@
 		"constructs": "10.8.1",
 		"jsii": "6.0.12",
 		"jsii-pacmak": "1.140.0",
-		"publib": "0.2.1058",
+		"publib": "0.3.7",
 		"typescript": "7.0.2",
 		"vitest": "4.1.11"
 	},
